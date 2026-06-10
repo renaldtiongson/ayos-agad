@@ -235,7 +235,7 @@
                 Home Services, On-Demand
             </p>
             <h1 class="font-display" style="color:white; font-size:2.4rem; font-weight:900; line-height:1.15; text-shadow:0 2px 20px rgba(0,0,0,0.2);">
-                Welcome<br/>Page
+                Ayos<br/>Agad
             </h1>
             <p style="color:rgba(255,255,255,0.70); font-size:0.82rem; margin-top:0.75rem; line-height:1.5;">
                 Sign in to book trusted professionals<br/>straight to your door.
