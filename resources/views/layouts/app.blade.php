@@ -64,6 +64,14 @@
         ::-webkit-scrollbar-thumb:hover { background: var(--blue-400); }
     </style>
 
+    <script>
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+    </script>
+
     @stack('styles')
 </head>
 <body class="antialiased">
