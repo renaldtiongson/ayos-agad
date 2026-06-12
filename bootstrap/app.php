@@ -21,6 +21,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('web', [
             \App\Http\Middleware\PreventBackHistory::class,
         ]);
+
+         $middleware->alias([
+            'isAdmin' => \App\Http\Middleware\IsAdmin::class,
+            'isTechnician' => \App\Http\Middleware\IsTechnician::class,
+            'isCustomer' => \App\Http\Middleware\IsCustomer::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
