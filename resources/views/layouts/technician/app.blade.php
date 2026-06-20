@@ -87,7 +87,7 @@
             class="fixed inset-0 z-30 bg-[#0b1f4d]/50 lg:hidden"
         ></div>
 
-        @include('layouts.sidebar')
+        @include('layouts.technician.sidebar')
 
         <div class="flex-1 flex flex-col min-w-0">
 

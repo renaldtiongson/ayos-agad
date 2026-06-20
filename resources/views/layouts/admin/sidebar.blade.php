@@ -9,7 +9,7 @@
 
     {{-- Brand --}}
     <div class="relative z-10 flex items-center justify-between px-6 py-6">
-        <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
+        <a href="{{ route('admin_dashboard') }}" class="flex items-center gap-2.5">
             <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-white/15 backdrop-blur font-display font-extrabold text-white">A</span>
             <span class="font-display font-extrabold text-lg tracking-tight text-white">Ayos Agad</span>
         </a>
@@ -25,7 +25,7 @@
 
         <p class="px-3 pt-2 pb-1 text-[0.65rem] font-semibold tracking-[0.2em] uppercase text-white/40">Menu</p>
 
-        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+        <a href="{{ route('admin_dashboard') }}" class="nav-link {{ request()->routeIs('admin_dashboard') ? 'active' : '' }}">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shrink-0">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
