@@ -38,6 +38,17 @@
             </svg>
             <span>My Bookings</span>
         </a>
+        
+
+        <a href="{{ route('admin.technicians.index') }}" class="nav-link {{ request()->routeIs('admin.technicians.*') ? 'active' : '' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shrink-0">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 20.25a8.25 8.25 0 0 1 11.545-7.586" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 14.487A3 3 0 1 0 13 18.349l.342.342a.75.75 0 0 0 1.06 0l4.5-4.5a.75.75 0 0 0 0-1.06l-.342-.342a3 3 0 0 0-1.698-.302Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 21 15l-3 3-1.5-1.5" />
+            </svg>
+            <span>Manage Technicians</span>
+        </a>
 
         <a href="#" class="nav-link {{ request()->routeIs('services.*') ? 'active' : '' }}">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 shrink-0">

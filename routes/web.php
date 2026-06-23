@@ -1,13 +1,9 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TechnicianController;
 use Illuminate\Support\Facades\Route;
 
-
-
-// Route::get('/', function () {
-//     return auth()->check() ? redirect()->route('customer_dashboard'): view('welcome');
-// })->name('home');
 
 Route::get('/', function () {
     if (!auth()->check()) {
@@ -44,6 +40,7 @@ Route::middleware(['auth','isCustomer'])->group(function () {
 //ADMIN ROUTES
 Route::middleware(['auth','isAdmin'])->group(function () {
     Route::get('/admin/dashboard', function () {return view('dashboard.admin_dashboard');})->name('admin_dashboard');
+    Route::get('/admin/manage-technicians', [TechnicianController::class, 'index'])->name('admin.technicians.index');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
