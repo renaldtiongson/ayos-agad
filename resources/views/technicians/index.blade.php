@@ -16,7 +16,7 @@
             <h4 class="mb-0 font-bold" style="color:#1e3a5f;">Technicians</h4>
             <p class="text-gray-500 mb-0 text-sm">Manage all registered technicians</p>
         </div>
-        <a href="#"
+        <a href="{{ route('admin.technicians.create') }}"
         class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
@@ -63,14 +63,14 @@
                     <select name="status"
                             class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500">
                         <option value="">All Statuses</option>
-                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>
-                            Active
+                        <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>
+                            Available
                         </option>
                         <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>
                             Inactive
                         </option>
-                        <option value="on_leave" {{ request('status') === 'on_leave' ? 'selected' : '' }}>
-                            On Leave
+                        <option value="on_leave" {{ request('status') === 'busy' ? 'selected' : '' }}>
+                            Busy
                         </option>
                     </select>
                 </div>
@@ -204,12 +204,12 @@
                             <td class="px-4 py-4">
                                 <div class="flex justify-end gap-2">
 
-                                    <a href="{{ route('admin.technicians.edit', $technician) }}"
+                                    <a href="#"
                                     class="inline-flex items-center gap-1 rounded-lg border border-indigo-300 px-3 py-1.5 text-sm font-medium text-indigo-600 hover:bg-indigo-50">
                                         Edit
                                     </a>
 
-                                    <form action="{{ route('admin.technicians.destroy', $technician) }}"
+                                    <form action="#"
                                         method="POST"
                                         onsubmit="return confirm('Delete {{ addslashes($technician->user->name ?? 'this technician') }}? This cannot be undone.')">
                                         @csrf
@@ -247,7 +247,7 @@
                                 </p>
 
                                 @unless(request()->hasAny(['search','status']))
-                                    <a href="#"
+                                    <a href="{{ route('admin.technicians.create') }}"
                                     class="mt-4 inline-flex rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
                                         Add Technician
                                     </a>

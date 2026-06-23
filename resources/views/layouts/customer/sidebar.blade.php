@@ -10,8 +10,15 @@
     {{-- Brand --}}
     <div class="relative z-10 flex items-center justify-between px-6 py-6">
         <a href="{{ route('customer_dashboard') }}" class="flex items-center gap-2.5">
-            <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-white/15 backdrop-blur font-display font-extrabold text-white">A</span>
-            <span class="font-display font-extrabold text-lg tracking-tight text-white">Ayos Agad</span>
+            <img
+                src="{{ asset('images/ayos-agad-logo.svg') }}"
+                alt="Ayos Agad Logo"
+                class="h-10 w-auto"
+            >
+
+            <span class="font-display font-extrabold text-lg tracking-tight text-white">
+                Ayos Agad
+            </span>
         </a>
         <button @click="sidebarOpen = false" class="lg:hidden text-white/70 hover:text-white transition" aria-label="Close menu">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

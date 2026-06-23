@@ -41,6 +41,8 @@ Route::middleware(['auth','isCustomer'])->group(function () {
 Route::middleware(['auth','isAdmin'])->group(function () {
     Route::get('/admin/dashboard', function () {return view('dashboard.admin_dashboard');})->name('admin_dashboard');
     Route::get('/admin/manage-technicians', [TechnicianController::class, 'index'])->name('admin.technicians.index');
+    Route::get('/admin/manage-technicians/create', [TechnicianController::class, 'create'])->name('admin.technicians.create');
+    Route::post('/admin/manage-technicians/store', [TechnicianController::class, 'store'])->name('admin.technicians.store');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
