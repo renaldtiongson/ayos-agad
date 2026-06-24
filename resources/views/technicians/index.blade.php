@@ -127,9 +127,9 @@
                     </tr>
                 </thead>
 
-                <tbody class="divide-y divide-gray-100 bg-white">
+                <tbody class="divide-y divide-gray-100 bg-white" id="technician-table">
                     @forelse ($technicians as $technician)
-                        <tr class="hover:bg-gray-50 transition">
+                        <tr class="hover:bg-gray-50 transition" data-technician-id="{{ $technician->id }}">
                             
                             {{-- Number --}}
                             <td class="px-4 py-4 text-sm text-gray-500">
@@ -204,22 +204,17 @@
                             <td class="px-4 py-4">
                                 <div class="flex justify-end gap-2">
 
-                                    <a href="#"
+                                    <a href="{{ route('admin.technicians.edit', $technician) }}"
                                     class="inline-flex items-center gap-1 rounded-lg border border-indigo-300 px-3 py-1.5 text-sm font-medium text-indigo-600 hover:bg-indigo-50">
                                         Edit
                                     </a>
 
-                                    <form action="#"
-                                        method="POST"
-                                        onsubmit="return confirm('Delete {{ addslashes($technician->user->name ?? 'this technician') }}? This cannot be undone.')">
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <button type="submit"
-                                                class="inline-flex items-center gap-1 rounded-lg border border-red-300 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50">
-                                            Delete
-                                        </button>
-                                    </form>
+                                    {{-- Delete Button --}}
+                                    <button type="button"
+                                            onclick="openDeleteModal('{{ $technician->id }}', '{{ addslashes($technician->user->name ?? 'this technician') }}')"
+                                            class="inline-flex items-center gap-1 rounded-lg border border-red-300 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
+                                        Delete
+                                    </button>
 
                                 </div>
                             </td>
@@ -228,36 +223,63 @@
                     @empty
                         <tr>
                             <td colspan="8" class="px-6 py-16 text-center">
+                                
+                                <div class="px-6 py-16 text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="mx-auto mb-4 h-12 w-12 text-gray-300"
+                                        fill="currentColor"
+                                        viewBox="0 0 16 16">
+                                        <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1z"/>
+                                    </svg>
 
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    class="mx-auto mb-4 h-12 w-12 text-gray-300"
-                                    fill="currentColor"
-                                    viewBox="0 0 16 16">
-                                    <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1z"/>
-                                </svg>
+                                    <h3 class="text-sm font-semibold text-gray-700">No technicians found</h3>
 
-                                <h3 class="text-sm font-semibold text-gray-700">
-                                    No technicians found
-                                </h3>
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        {{ request()->hasAny(['search','status'])
+                                            ? 'Try adjusting your search or filters.'
+                                            : 'Get started by adding your first technician.' }}
+                                    </p>
 
-                                <p class="mt-1 text-sm text-gray-500">
-                                    {{ request()->hasAny(['search','status'])
-                                        ? 'Try adjusting your search or filters.'
-                                        : 'Get started by adding your first technician.' }}
-                                </p>
-
-                                @unless(request()->hasAny(['search','status']))
-                                    <a href="{{ route('admin.technicians.create') }}"
-                                    class="mt-4 inline-flex rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
-                                        Add Technician
-                                    </a>
-                                @endunless
-
+                                    @unless(request()->hasAny(['search','status']))
+                                        <a href="{{ route('admin.technicians.create') }}"
+                                        class="mt-4 inline-flex rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+                                            Add Technician
+                                        </a>
+                                    @endunless
+                                </div>
+                                
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
+            
+
+            <div id="technician-empty" hidden>
+                <div class="px-6 py-16 text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="mx-auto mb-4 h-12 w-12 text-gray-300"
+                        fill="currentColor"
+                        viewBox="0 0 16 16">
+                        <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1z"/>
+                    </svg>
+
+                    <h3 class="text-sm font-semibold text-gray-700">No technicians found</h3>
+
+                    <p class="mt-1 text-sm text-gray-500">
+                        {{ request()->hasAny(['search','status'])
+                            ? 'Try adjusting your search or filters.'
+                            : 'Get started by adding your first technician.' }}
+                    </p>
+
+                    @unless(request()->hasAny(['search','status']))
+                        <a href="{{ route('admin.technicians.create') }}"
+                        class="mt-4 inline-flex rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+                            Add Technician
+                        </a>
+                    @endunless
+                </div>
+            </div>
         </div>
 
         {{-- Pagination --}}
@@ -273,5 +295,151 @@
         @endif
     </div>
 
+    {{-- Delete Confirmation Modal (place once, outside any loops) --}}
+    <div id="deleteModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm"
+        role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+
+        <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl mx-4"
+            onclick="event.stopPropagation()">
+
+            {{-- Icon --}}
+            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                </svg>
+            </div>
+
+            {{-- Content --}}
+            <h2 id="deleteModalTitle" class="text-lg font-semibold text-gray-900">Delete Technician</h2>
+            <p class="mt-1 text-sm text-gray-500">
+                Are you sure you want to delete
+                <span id="deleteTechnicianName" class="font-medium text-gray-700"></span>?
+                This action cannot be undone.
+            </p>
+
+            {{-- Actions --}}
+            <div class="mt-6 flex justify-end gap-3">
+                <button type="button"
+                        onclick="closeDeleteModal()"
+                        class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                    Cancel
+                </button>
+                <button type="button"
+                        id="confirmDeleteBtn"
+                        onclick="confirmDelete()"
+                        class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                    <svg id="deleteSpinner" class="hidden h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                    </svg>
+                    <span id="deleteButtonText">Delete</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
 
 @endsection
+
+@push('scripts')
+<script>
+    let deleteTechnicianId = null;
+
+    function openDeleteModal(id, name) {
+        deleteTechnicianId = id;
+        document.getElementById('deleteTechnicianName').textContent = name;
+        const modal = document.getElementById('deleteModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+    }
+
+    function closeDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+        deleteTechnicianId = null;
+        setDeleteLoading(false);
+    }
+
+    function setDeleteLoading(loading) {
+        const btn = document.getElementById('confirmDeleteBtn');
+        const spinner = document.getElementById('deleteSpinner');
+        const text = document.getElementById('deleteButtonText');
+
+        btn.disabled = loading;
+        spinner.classList.toggle('hidden', !loading);
+        text.textContent = loading ? 'Deleting...' : 'Delete';
+    }
+
+    async function confirmDelete() {
+        if (!deleteTechnicianId) return;
+
+        const url = `{{ route('admin.technicians.destroy', ['technician' => ':id']) }}`.replace(':id', deleteTechnicianId);
+
+        setDeleteLoading(true);
+
+        try {
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+
+
+                const id = deleteTechnicianId;
+                closeDeleteModal();
+
+                const row = document.querySelector(`[data-technician-id="${id}"]`);
+                if (row){
+                    
+                    row.remove();
+
+                    // Check if table has no more rows
+                    const remainingRows = document.querySelectorAll('[data-technician-id]');
+
+
+                    console.log('remaining rows:', remainingRows.length);
+                    console.log('empty el:', document.getElementById('technician-empty'));
+
+                    if (remainingRows.length === 0) {
+                        document.getElementById('technician-table').classList.add('hidden');
+                        document.getElementById('technician-empty').removeAttribute('hidden');
+                    }
+
+
+                } 
+
+
+
+            } else {
+                console.log('may error');
+                alert(data.message ?? 'Failed to delete technician. Please try again.');
+                setDeleteLoading(false);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('An unexpected error occurred. Please try again.');
+            setDeleteLoading(false);
+        }
+    }
+
+    // Close on backdrop click
+    document.getElementById('deleteModal').addEventListener('click', closeDeleteModal);
+
+    // Close on Escape key
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeDeleteModal();
+    });
+</script>
+@endpush

@@ -6,6 +6,7 @@ use App\Models\Technician;
 use App\Models\User;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -85,5 +86,70 @@ class TechnicianController extends Controller
             ->route('admin.technicians.index')
             ->with('success', 'Technician added successfully.');
     }
+
+    public function edit(Technician $technician)
+    {
+        $technician->load('user');
+
+        return view('technicians.edit', compact('technician'));
+    }
+
+    public function update(Request $request, Technician $technician)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')
+                    ->ignore($technician->user_id),
+            ],
+
+            'phone' => ['required', 'string', 'max:20'],
+            'specialty' => ['required', 'string', 'max:255'],
+            'location' => ['required', 'string', 'max:255'],
+            'experience_years' => ['required', 'integer', 'min:0'],
+            'status' => ['required', 'in:available,inactive'],
+
+            'password' => ['nullable', 'min:8'],
+        ]);
+
+        DB::transaction(function () use ($validated, $technician) {
+
+            $userData = [
+                'name'  => $validated['name'],
+                'email' => $validated['email'],
+            ];
+
+            if (!empty($validated['password'])) {
+                $userData['password'] = Hash::make($validated['password']);
+            }
+
+            $technician->user->update($userData);
+
+            $technician->update([
+                'phone'            => $validated['phone'],
+                'specialty'        => $validated['specialty'],
+                'location'         => $validated['location'],
+                'experience_years' => $validated['experience_years'],
+                'status'           => $validated['status'],
+            ]);
+        });
+
+        return redirect()
+            ->route('admin.technicians.index')
+            ->with('success', 'Technician updated successfully.');
+    }
+
+    public function destroy(Technician $technician)
+    {
+        $technician->user->delete();
+
+        return true;
+    }
+
+    
+
+
 
 }
