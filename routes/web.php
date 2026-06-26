@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TechnicianController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +48,13 @@ Route::middleware(['auth','isAdmin'])->group(function () {
     Route::get('/admin/manage-technicians/{technician}/edit', [TechnicianController::class, 'edit'])->name('admin.technicians.edit');
     Route::put('/admin/manage-technicians/{technician}/update', [TechnicianController::class, 'update'])->name('admin.technicians.update');
     Route::delete('/admin/manage-technicians/{technician}/delete', [TechnicianController::class, 'destroy'])->name('admin.technicians.destroy');
+
+    Route::get('/admin/manage-services', [ServiceController::class, 'index'])->name('admin.services.index');
+    Route::get('/admin/manage-services/create', [ServiceController::class, 'create'])->name('admin.services.create');
+    // Route::post('/admin/manage-services/store', [ServiceController::class, 'store'])->name('admin.services.store');
+    Route::get('/admin/manage-services/{service}/edit', [ServiceController::class, 'edit'])->name('admin.services.edit');
+    // Route::put('/admin/manage-services/{service}/update', [ServiceController::class, 'update'])->name('admin.services.update');
+    Route::delete('/admin/manage-services/{service}/delete', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
