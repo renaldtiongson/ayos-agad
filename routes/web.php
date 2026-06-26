@@ -51,9 +51,9 @@ Route::middleware(['auth','isAdmin'])->group(function () {
 
     Route::get('/admin/manage-services', [ServiceController::class, 'index'])->name('admin.services.index');
     Route::get('/admin/manage-services/create', [ServiceController::class, 'create'])->name('admin.services.create');
-    // Route::post('/admin/manage-services/store', [ServiceController::class, 'store'])->name('admin.services.store');
+    Route::post('/admin/manage-services/store', [ServiceController::class, 'store'])->name('admin.services.store');
     Route::get('/admin/manage-services/{service}/edit', [ServiceController::class, 'edit'])->name('admin.services.edit');
-    // Route::put('/admin/manage-services/{service}/update', [ServiceController::class, 'update'])->name('admin.services.update');
+    Route::put('/admin/manage-services/{service}/update', [ServiceController::class, 'update'])->name('admin.services.update');
     Route::delete('/admin/manage-services/{service}/delete', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

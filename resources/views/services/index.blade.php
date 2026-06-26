@@ -225,6 +225,138 @@
         @endif
     </div>
 
+    {{-- Delete Confirmation Modal --}}
+    <div id="deleteModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm"
+        role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+    
+        <div class="mx-4 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+            onclick="event.stopPropagation()">
+    
+            {{-- Icon --}}
+            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                </svg>
+            </div>
+    
+            {{-- Content --}}
+            <h2 id="deleteModalTitle" class="text-lg font-semibold text-gray-900">Delete Service</h2>
+            <p class="mt-1 text-sm text-gray-500">
+                Are you sure you want to delete
+                <span id="deleteServiceName" class="font-medium text-gray-700"></span>?
+                This action cannot be undone.
+            </p>
+    
+            {{-- Actions --}}
+            <div class="mt-6 flex justify-end gap-3">
+                <button type="button"
+                        onclick="closeDeleteModal()"
+                        class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">
+                    Cancel
+                </button>
+                <button type="button"
+                        id="confirmDeleteBtn"
+                        onclick="confirmDelete()"
+                        class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60">
+                    <svg id="deleteSpinner" class="hidden h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                    </svg>
+                    <span id="deleteButtonText">Delete</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
 
 @endsection
+
+@push('scripts')
+<script>
+    let deleteServiceId = null;
+ 
+    function openDeleteModal(id, name) {
+        deleteServiceId = id;
+        document.getElementById('deleteServiceName').textContent = name;
+        const modal = document.getElementById('deleteModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+    }
+ 
+    function closeDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+        deleteServiceId = null;
+        setDeleteLoading(false);
+    }
+ 
+    function setDeleteLoading(loading) {
+        const btn    = document.getElementById('confirmDeleteBtn');
+        const spinner = document.getElementById('deleteSpinner');
+        const text   = document.getElementById('deleteButtonText');
+ 
+        btn.disabled = loading;
+        spinner.classList.toggle('hidden', !loading);
+        text.textContent = loading ? 'Deleting...' : 'Delete';
+    }
+ 
+    async function confirmDelete() {
+        if (!deleteServiceId) return;
+ 
+        const url = `{{ route('admin.services.destroy', ['service' => ':id']) }}`.replace(':id', deleteServiceId);
+ 
+        setDeleteLoading(true);
+ 
+        try {
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+ 
+            const data = await response.json();
+ 
+            if (response.ok) {
+                const id = deleteServiceId;
+                closeDeleteModal();
+ 
+                const row = document.querySelector(`[data-service-id="${id}"]`);
+                if (row) {
+                    row.remove();
+ 
+                    const remainingRows = document.querySelectorAll('[data-service-id]');
+ 
+                    if (remainingRows.length === 0) {
+                        document.getElementById('service-table').classList.add('hidden');
+                        document.getElementById('service-empty').removeAttribute('hidden');
+                    }
+                }
+            } else {
+                alert(data.message ?? 'Failed to delete service. Please try again.');
+                setDeleteLoading(false);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('An unexpected error occurred. Please try again.');
+            setDeleteLoading(false);
+        }
+    }
+ 
+    // Close on backdrop click
+    document.getElementById('deleteModal').addEventListener('click', closeDeleteModal);
+ 
+    // Close on Escape key
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeDeleteModal();
+    });
+</script>
+@endpush
 
