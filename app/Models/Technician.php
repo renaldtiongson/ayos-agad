@@ -13,7 +13,6 @@ class Technician extends Model
     protected $fillable = [
         'user_id',
         'phone',
-        'specialty',
         'location',
         'experience_years',
         'status',
@@ -26,6 +25,6 @@ class Technician extends Model
 
     public function services()
     {
-        return $this->belongsToMany(Service::class);
+        return $this->belongsToMany(Service::class, 'service_technician');
     }
 }

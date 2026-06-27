@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Technician;
 use App\Models\User;
+use App\Models\Service;
+use App\Models\Technician;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -15,17 +16,19 @@ class TechnicianController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Technician::with('user');
+        $query = Technician::with(['user', 'services']);
 
         // Optional search/filter
         if ($request->filled('search')) {
             $search = $request->search;
             $query->whereHas('user', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                ->orWhere('email', 'like', "%{$search}%");
             })
-            ->orWhere('specialty', 'like', "%{$search}%")
-            ->orWhere('location', 'like', "%{$search}%");
+            ->orWhere('location', 'like', "%{$search}%")
+            ->orWhereHas('services', function ($q) use ($search) {
+                $q->where('service_name', 'like', "%{$search}%");
+            });
         }
 
         if ($request->filled('status')) {
@@ -39,10 +42,10 @@ class TechnicianController extends Controller
 
     public function create()
     {
-        // Only users not yet linked to a technician profile
+        $services = Service::orderBy('service_name')->get();
         $users = User::doesntHave('technician')->orderBy('name')->get();
 
-        return view('technicians.add', compact('users'));
+        return view('technicians.add', compact('users', 'services'));
     }
 
 
@@ -50,37 +53,41 @@ class TechnicianController extends Controller
     {
         $validated = $request->validate([
             // User
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'min:8'],
+            'name'             => ['required', 'string', 'max:255'],
+            'email'            => ['required', 'email', 'unique:users,email'],
+            'password'         => ['required', 'min:8'],
 
             // Technician
-            'phone' => ['required'],
-            'specialty' => ['required'],
-            'location' => ['required'],
+            'phone'            => ['required'],
+            'location'         => ['required'],
             'experience_years' => ['required', 'integer', 'min:0'],
-            'status' => ['required', 'in:available,inactive'],
+            'status'           => ['required', 'in:available,inactive'],
+            'services'         => ['required', 'array', 'min:1'],
+            'services.*'       => ['exists:services,id'],
         ]);
 
-        DB::transaction(function () use ($validated) {
+        $technician = null;
+
+        DB::transaction(function () use ($validated, &$technician) {
 
             $user = User::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
+                'name'     => $validated['name'],
+                'email'    => $validated['email'],
                 'password' => Hash::make($validated['password']),
             ]);
 
             $user->assignRole('technician');
 
-            Technician::create([
-                'user_id' => $user->id,
-                'phone' => $validated['phone'],
-                'specialty' => $validated['specialty'],
-                'location' => $validated['location'],
+            $technician = Technician::create([
+                'user_id'          => $user->id,
+                'phone'            => $validated['phone'],
+                'location'         => $validated['location'],
                 'experience_years' => $validated['experience_years'],
-                'status' => $validated['status'],
+                'status'           => $validated['status'],
             ]);
         });
+
+        $technician->services()->attach($validated['services']);
 
         return redirect()
             ->route('admin.technicians.index')
@@ -89,29 +96,30 @@ class TechnicianController extends Controller
 
     public function edit(Technician $technician)
     {
-        $technician->load('user');
+        $technician->load('user', 'services');
 
-        return view('technicians.edit', compact('technician'));
+        $services = Service::orderBy('service_name')->get();
+        $selectedServices = $technician->services->pluck('id')->toArray();
+
+        return view('technicians.edit', compact('technician', 'services', 'selectedServices'));
     }
 
     public function update(Request $request, Technician $technician)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
+            'name'             => ['required', 'string', 'max:255'],
+            'email'            => [
                 'required',
                 'email',
-                Rule::unique('users', 'email')
-                    ->ignore($technician->user_id),
+                Rule::unique('users', 'email')->ignore($technician->user_id),
             ],
-
-            'phone' => ['required', 'string', 'max:20'],
-            'specialty' => ['required', 'string', 'max:255'],
-            'location' => ['required', 'string', 'max:255'],
+            'phone'            => ['required', 'string', 'max:20'],
+            'services'         => ['required', 'array', 'min:1'],
+            'services.*'       => ['exists:services,id'],
+            'location'         => ['required', 'string', 'max:255'],
             'experience_years' => ['required', 'integer', 'min:0'],
-            'status' => ['required', 'in:available,inactive'],
-
-            'password' => ['nullable', 'min:8'],
+            'status'           => ['required', 'in:available,inactive'],
+            'password'         => ['nullable', 'min:8'],
         ]);
 
         DB::transaction(function () use ($validated, $technician) {
@@ -129,11 +137,13 @@ class TechnicianController extends Controller
 
             $technician->update([
                 'phone'            => $validated['phone'],
-                'specialty'        => $validated['specialty'],
                 'location'         => $validated['location'],
                 'experience_years' => $validated['experience_years'],
                 'status'           => $validated['status'],
             ]);
+
+            // sync() detaches removed and attaches new — perfect for edit
+            $technician->services()->sync($validated['services']);
         });
 
         return redirect()

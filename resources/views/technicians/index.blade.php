@@ -159,11 +159,17 @@
                                 {{ $technician->phone }}
                             </td>
 
-                            {{-- Specialty --}}
+                            {{-- Services --}}
                             <td class="px-4 py-4">
-                                <span class="inline-flex rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-medium text-indigo-700">
-                                    {{ $technician->specialty }}
-                                </span>
+                                <div class="flex flex-wrap gap-1">
+                                    @forelse ($technician->services as $service)
+                                        <span class="inline-flex rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-medium text-indigo-700">
+                                            {{ $service->service_name }}
+                                        </span>
+                                    @empty
+                                        <span class="text-xs text-gray-400">No services</span>
+                                    @endforelse
+                                </div>
                             </td>
 
                             {{-- Location --}}

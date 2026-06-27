@@ -166,53 +166,50 @@
 
                 </div>
 
-                {{-- Specialty + Location --}}
-                <div class="mb-6 grid gap-4 sm:grid-cols-2">
+                {{-- Services --}}
+                <div class="mb-6">
+                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                        Services
+                        <span class="text-red-500">*</span>
+                    </label>
 
-                    <div>
-                        <label for="specialty"
-                            class="mb-2 block text-sm font-medium text-gray-700">
-                            Specialty
-                            <span class="text-red-500">*</span>
-                        </label>
-
-                        <input
-                            type="text"
-                            name="specialty"
-                            id="specialty"
-                            value="{{ old('specialty', $technician->specialty) }}"
-                            placeholder="e.g. HVAC, Electrician, Plumber"
-                            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('specialty') border-red-500 @enderror">
-
-                        @error('specialty')
-                            <p class="mt-1 text-sm text-red-600">
-                                {{ $message }}
-                            </p>
-                        @enderror
+                    <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 rounded-lg border border-gray-300 p-3 shadow-sm @error('services') border-red-500 @enderror">
+                        @foreach ($services as $service)
+                            <label class="flex items-center gap-2 cursor-pointer rounded-md p-2 hover:bg-indigo-50 transition">
+                                <input
+                                    type="checkbox"
+                                    name="services[]"
+                                    value="{{ $service->id }}"
+                                    {{ in_array($service->id, old('services', $selectedServices)) ? 'checked' : '' }}
+                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                <span class="text-sm text-gray-700">{{ $service->service_name }}</span>
+                            </label>
+                        @endforeach
                     </div>
 
-                    <div>
-                        <label for="location"
-                            class="mb-2 block text-sm font-medium text-gray-700">
-                            Location
-                            <span class="text-red-500">*</span>
-                        </label>
+                    @error('services')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
 
-                        <input
-                            type="text"
-                            name="location"
-                            id="location"
-                            value="{{ old('location', $technician->location) }}"
-                            placeholder="e.g. Manila, PH"
-                            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('location') border-red-500 @enderror">
+                {{-- Location --}}
+                <div class="mb-6">
+                    <label for="location" class="mb-2 block text-sm font-medium text-gray-700">
+                        Location
+                        <span class="text-red-500">*</span>
+                    </label>
 
-                        @error('location')
-                            <p class="mt-1 text-sm text-red-600">
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
+                    <input
+                        type="text"
+                        name="location"
+                        id="location"
+                        value="{{ old('location', $technician->location) }}"
+                        placeholder="e.g. Manila, PH"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('location') border-red-500 @enderror">
 
+                    @error('location')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Status --}}
