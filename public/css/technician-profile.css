@@ -1,0 +1,166 @@
+/* ─── Profile wrapper ─────────────────────────────────────── */
+.tech-profile {
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    background: #ffffff;
+    color: #111827;
+    padding: 1.75rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ─── Header ──────────────────────────────────────────────── */
+.tp-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.tp-avatar {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #d1fae5;
+    color: #065f46;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: 0.04em;
+}
+
+.tp-identity {
+    flex: 1;
+    min-width: 0;
+}
+
+.tp-name-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tp-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.tp-location {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: #6b7280;
+    margin: 4px 0 0;
+}
+
+/* ─── Status badge ────────────────────────────────────────── */
+.tp-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.tp-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+}
+
+/* available */
+.tp-status-available {
+    background: #d1fae5;
+    color: #065f46;
+}
+.tp-status-available .tp-status-dot {
+    background: #059669;
+}
+
+/* busy */
+.tp-status-busy {
+    background: #fef3c7;
+    color: #92400e;
+}
+.tp-status-busy .tp-status-dot {
+    background: #d97706;
+}
+
+/* inactive */
+.tp-status-inactive {
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+}
+.tp-status-inactive .tp-status-dot {
+    background: #9ca3af;
+}
+
+/* ─── Divider ─────────────────────────────────────────────── */
+.tp-divider {
+    border: none;
+    border-top: 1px solid #f3f4f6;
+    margin: 1.25rem 0;
+}
+
+/* ─── Section label ───────────────────────────────────────── */
+.tp-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin: 0 0 10px;
+}
+
+/* ─── Services ────────────────────────────────────────────── */
+.tp-services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tp-service-tag {
+    display: inline-block;
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 12px;
+}
+
+.tp-empty-text {
+    font-size: 13px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+/* ─── Placeholder ─────────────────────────────────────────── */
+.tp-placeholder {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f9fafb;
+    border: 1px dashed #e5e7eb;
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: #9ca3af;
+}
+
+.tp-placeholder-text {
+    font-size: 13px;
+    color: #9ca3af;
+    margin: 0;
+    font-style: italic;
+}

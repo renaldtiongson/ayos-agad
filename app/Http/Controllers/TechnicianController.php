@@ -158,6 +158,16 @@ class TechnicianController extends Controller
         return true;
     }
 
+    public function show(Technician $technician)
+    {
+        
+        $technician->load('user', 'services');
+
+        return view('technicians.show', compact('technician'));
+    }
+
+    
+
     
 
 

@@ -56,6 +56,8 @@ Route::middleware(['auth','isAdmin'])->group(function () {
     Route::put('/admin/manage-services/{service}/update', [ServiceController::class, 'update'])->name('admin.services.update');
     Route::delete('/admin/manage-services/{service}/delete', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
 
+    Route::get('/t/{technician}', [TechnicianController::class, 'show'])->name('technicians.show'); //username to be used in the future for public profile.
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

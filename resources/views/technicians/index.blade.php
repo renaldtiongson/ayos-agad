@@ -135,7 +135,7 @@
                             <td class="px-4 py-4 text-sm text-gray-500">
                                 {{ ($technicians->currentPage() - 1) * $technicians->perPage() + $loop->iteration }}
                             </td>
-
+                            
                             {{-- Technician --}}
                             <td class="px-4 py-4">
                                 <div class="flex items-center gap-3">
@@ -144,9 +144,13 @@
                                     </div>
 
                                     <div>
-                                        <div class="font-semibold text-slate-800">
-                                            {{ $technician->user->name ?? '—' }}
+                                        <div class="font-semibold">
+                                            <a href="{{ route('technicians.show', $technician) }}"
+                                            class="text-slate-800 transition-colors hover:text-indigo-600 hover:underline">
+                                                {{ $technician->user->name ?? '—' }}
+                                            </a>
                                         </div>
+
                                         <div class="text-sm text-gray-500">
                                             {{ $technician->user->email ?? '—' }}
                                         </div>
